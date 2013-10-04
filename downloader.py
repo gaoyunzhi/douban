@@ -22,7 +22,8 @@ class Downloader(object):
     
     def auto(self):
         self.albums()
-        for album_name, url in self.albums_list:           
+        for album_name, url in self.albums_list:  
+            print 'starting', album_name         
             if not self.match_filter(url, album_name):
                 continue
             album_name = create_folder(ALBUM_DIR, to_filename(album_name))
@@ -47,11 +48,17 @@ class Downloader(object):
             if not current_list: break
             photo_list.extend(current_list)
             current_item += ALBUMPAGE_ITEM
+        count = 0
         for photo_id, name in photo_list:
+            count += 1
             try:
                 url = PHOTO_URL % photo_id
-                filename = os.path.join(album_name, to_filename(name) + '.jpg')
-                urllib.urlretrieve(url, filename) 
+                filename = to_filename(name)
+                filepath = os.path.join(album_name, filename + '.jpg')
+                if not filename or os.path.exists(filepath):
+                    filename += str(count)
+                filepath = os.path.join(album_name, filename + '.jpg')
+                urllib.urlretrieve(url, filepath) 
             except Exception, e:
                 print 'download failed for url = %(url)s, filename = %(filename)s, because of error %(e)s' % locals()
             
@@ -61,6 +68,6 @@ class Downloader(object):
 
 
 D = Downloader()
-D.addfilter([u'虎丘图册', u'再梦徽州'])
+# D.addfilter([u'虎丘图册', u'再梦徽州'])
 D.auto()
 time.sleep(10)

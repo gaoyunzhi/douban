@@ -10,7 +10,7 @@ ALBUMPAGE_ITEM = 18
 START_TAG = '?start='
 PHOTO_URL = 'http://img3.douban.com/view/photo/photo/public/p%s.jpg'
 
-ALBUM_REG = re.compile(r'<a title="(.*)" href="(http://www.douban.com/photos/album/\d*/)" target="_self">')
+ALBUM_REG = re.compile(r'<a title="(.*)" href="(http://www.douban.com/photos/album/\d+/)" target="_self">')
 LIKEITEM_REG = re.compile(r'<div class="fav-main">')
-PHOTO_REG = re.compile(r'<a href="http://www.douban.com/photos/photo/(\d*)/" class="photolst_photo" title="(.*)">')
+PHOTO_REG = re.compile(r'<a href="http://www.douban.com/photos/photo/(\d+)/" class="photolst_photo" title="(.*)">')
 
