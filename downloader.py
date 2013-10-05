@@ -51,16 +51,17 @@ class Downloader(object):
         count = 0
         for photo_id, name in photo_list:
             count += 1
+            url = PHOTO_URL % photo_id
+            filename = to_filename(name)[:255] # not tested
+            filepath = os.path.join(album_name, filename + '.jpg')
+            if not filename or os.path.exists(filepath):
+                filename += str(count)
+            filepath = os.path.join(album_name, filename + '.jpg')
             try:
-                url = PHOTO_URL % photo_id
-                filename = to_filename(name)
-                filepath = os.path.join(album_name, filename + '.jpg')
-                if not filename or os.path.exists(filepath):
-                    filename += str(count)
-                filepath = os.path.join(album_name, filename + '.jpg')
                 urllib.urlretrieve(url, filepath) 
             except Exception, e:
-                print 'download failed for url = %(url)s, filename = %(filename)s, because of error %(e)s' % locals()
+                errcode = e.code
+                print 'download failed for url = %(url)s, filename = %(filename)s, with error code = %(errcode)s, because of error %(e)s' % locals()
             
             
             
