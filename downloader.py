@@ -15,7 +15,7 @@ class Downloader(object):
     def add_filter(self, filter_list):
         self.filter.extend(filter_list)
         
-    def match_filter(self, url, album_name):
+    def __match_filter(self, url, album_name):
         if not self.filter: return True
         for filter_item in self.filter:
             if filter_item in url or filter_item in album_name:
@@ -24,15 +24,15 @@ class Downloader(object):
     
     def auto(self):
         ''' automatically download all that matches filter '''
-        self.albums()
+        self.__albums()
         for album_name, url in self.albums_list:  
             print 'starting', album_name         
-            if not self.match_filter(url, album_name):
+            if not self.__match_filter(url, album_name):
                 continue
             album_folder = create_folder(ALBUM_DIR, album_name)
-            self.download(url, album_folder)
+            self.__download(url, album_folder)
         
-    def albums(self):
+    def __albums(self):
         ''' find all liked albums '''
         self.albums_list = []
         current_item = START_ITEM
@@ -43,7 +43,7 @@ class Downloader(object):
             if not re.search(LIKEITEM_REG, current_page): 
                 break # break if there is no likeitem anymore
 
-    def download(self, url, album_folder):
+    def __download(self, url, album_folder):
         ''' download album in url to album_folder '''
         current_item = 0
         photo_list = [] 
@@ -66,7 +66,8 @@ class Downloader(object):
                 urllib.urlretrieve(url, filepath) 
             except Exception, e:
                 errcode = e.code
-                print 'download failed for url = %(url)s, filename = %(filename)s, with error code = %(errcode)s, because of error %(e)s' % locals()
+                print 'download failed for url = %(url)s, filename = %(filename)s' % locals()
+                print 'with error code = %(errcode)s, because of error %(e)s' % locals()
 
 if __name__ == "__main__":
     D = Downloader()
