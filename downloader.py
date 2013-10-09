@@ -2,8 +2,8 @@
 from constant import ALBUM_DIR, START_ITEM, LIKEPAGE_URL, ALBUM_REG, \
     MAX_ALBUM_NUMBER, LIKEITEM_REG, LIKEPAGE_ITEM, START_TAG, ALBUMPAGE_ITEM, \
     PHOTO_REG, PHOTO_URL
-from util import wget, create_folder, to_filename
-import re, time, os, urllib
+from util import wget, create_folder, download_items
+import re, time
 
 class Downloader(object):
     ''' douban downloader for albums in your like page '''
@@ -26,7 +26,7 @@ class Downloader(object):
         ''' automatically download all that matches filter '''
         self.__albums()
         for album_name, url in self.albums_list:  
-            print 'starting', album_name         
+            print 'starting', album_name   
             if not self.__match_filter(url, album_name):
                 continue
             album_folder = create_folder(ALBUM_DIR, album_name)
@@ -53,22 +53,10 @@ class Downloader(object):
             if not current_list: break
             photo_list.extend(current_list)
             current_item += ALBUMPAGE_ITEM
-        count = 0
-        for photo_id, name in photo_list:
-            count += 1
-            url = PHOTO_URL % photo_id
-            filename = to_filename(name)[:255] # not tested
-            filepath = os.path.join(album_folder, filename + '.jpg')
-            if not filename or os.path.exists(filepath):
-                filename += str(count)
-            filepath = os.path.join(album_folder, filename + '.jpg')
-            try:
-                urllib.urlretrieve(url, filepath) 
-            except Exception, e:
-                errcode = e.code
-                print 'download failed for url = %(url)s, filename = %(filename)s' % locals()
-                print 'with error code = %(errcode)s, because of error %(e)s' % locals()
-
+        photo_list = [(PHOTO_URL % x, y) for x, y in photo_list]
+            # change id to url, need to refactor this shit
+        download_items(photo_list, album_folder)
+    
 if __name__ == "__main__":
     D = Downloader()
     # D.add_filter([u'虎丘图册', u'再梦徽州'])

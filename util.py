@@ -1,4 +1,5 @@
-import urllib, os
+# -*- coding: utf8 -*-
+import urllib, os, sys
 
 def wget(url):
     ''' get webpage '''
@@ -21,4 +22,25 @@ def to_filename(name):
     ''' replace '\/:*?"<>|' in filename with '_' '''
     # seems the trans function doesn't work here 
     # because we have unicode name
-    return ''.join([x in r'\/:*?"<>|' and '_' or x for x in name])
+    # '\n' part not tested
+    name = ''.join([x in r'\/:*?"<>|'+'\n' and '_' or x for x in name])
+    return name.encode( sys.getfilesystemencoding() )
+
+def download_items(photo_list, album_folder):
+    count = 0
+    for url, name in photo_list:
+        count += 1
+        filename = to_filename(name)[:255]
+        filepath = os.path.join(album_folder, filename + '.jpg')
+        if not filename or os.path.exists(filepath):
+            filename += str(count)
+        filepath = os.path.join(album_folder, filename + '.jpg')
+        try:
+            urllib.urlretrieve(url, filepath) 
+        except Exception, e:
+            try:
+                errcode = str(e.code)
+            except:
+                errcode = 'None'
+            print 'download failed for url = %(url)s, filename = %(filename)s' % locals()
+            print 'with error code = %(errcode)s, because of error %(e)s' % locals()
