@@ -23,8 +23,9 @@ def to_filename(name):
     # seems the trans function doesn't work here 
     # because we have unicode name
     # '\n' part not tested
-    name = ''.join([x in r'\/:*?"<>|'+'\n' and '_' or x for x in name])
-    return name.encode( sys.getfilesystemencoding() )
+    name = name.encode( sys.getfilesystemencoding() )
+    name = ''.join([x in r'|\/:*?"<>'+'\r\n' and '_' or x for x in name])
+    return name
 
 def download_items(photo_list, album_folder):
     count = 0
@@ -44,3 +45,4 @@ def download_items(photo_list, album_folder):
                 errcode = 'None'
             print 'download failed for url = %(url)s, filename = %(filename)s' % locals()
             print 'with error code = %(errcode)s, because of error %(e)s' % locals()
+            print '='.join([x for x in filename])

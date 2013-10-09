@@ -26,9 +26,10 @@ class Downloader(object):
         ''' automatically download all that matches filter '''
         self.__albums()
         for album_name, url in self.albums_list:  
-            print 'starting', album_name   
+            print 'find', album_name   
             if not self.__match_filter(url, album_name):
                 continue
+            print 'starting', album_name, url 
             album_folder = create_folder(ALBUM_DIR, album_name)
             self.__download(url, album_folder)
         
@@ -49,7 +50,7 @@ class Downloader(object):
         photo_list = [] 
         while True:
             current_page = wget(url + START_TAG + str(current_item))
-            current_list = re.findall(PHOTO_REG,current_page)
+            current_list = re.findall(PHOTO_REG, current_page)
             if not current_list: break
             photo_list.extend(current_list)
             current_item += ALBUMPAGE_ITEM
@@ -59,6 +60,6 @@ class Downloader(object):
     
 if __name__ == "__main__":
     D = Downloader()
-    # D.add_filter([u'虎丘图册', u'再梦徽州'])
+    D.add_filter([u'空无一人的世界'])
     D.auto()
     time.sleep(10) # give time to copy error message from terminal
